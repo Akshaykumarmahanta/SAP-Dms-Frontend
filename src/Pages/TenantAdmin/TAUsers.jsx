@@ -364,7 +364,11 @@ export default function TAUsers({ token }) {
 
   // ── Toggle active ────────────────────────────────────────────────────────
   async function handleToggleActive(user) {
-    setSavingId(`toggle-${user.id}`);
+  if (user.role === "TenantAdmin") {
+    toast("TenantAdmin ko deactivate nahi kar sakte", "error");
+    return;
+  }
+  setSavingId(`toggle-${user.id}`);
     try {
       const res = await fetch(`${API_BASE}/users/${user.id}`, {
         method: "PUT",
@@ -596,7 +600,7 @@ export default function TAUsers({ token }) {
                         <td className="px-4 py-3.5">
                           <button
                             onClick={() => handleToggleActive(u)}
-                            disabled={isToggling || isDeleting}
+                            disabled={isToggling || isDeleting || u.role === "TenantAdmin"}
                             className={`w-10 h-[22px] rounded-full relative flex-shrink-0 transition-colors
                               ${u.isActive ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"}
                               ${isToggling ? "opacity-60" : ""}`}>
